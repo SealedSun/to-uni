@@ -1,1 +1,12 @@
+# Compiled files
+*.o
+*.so
+*.rlib
+*.dll
+*.*.orig
+
+# Executables
+*.exe
+
+# Cargo
 /target
