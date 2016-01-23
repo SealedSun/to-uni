@@ -10,3 +10,7 @@
 
 # Cargo
 /target
+
+# Example files
+example-files/*.inplace.*
+example-files/*.out.*
