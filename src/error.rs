@@ -49,7 +49,6 @@ pub mod code {
         pub static MISC: u8 = 8;
     }
     pub mod usage {
-        pub static OUTPUT: u8 = 3;
         pub static MISSING_OUTPUT_FILE_NAME: u8 = 4;
         pub static MISSING_OUTPUT: u8 =  5;
         pub static INPUT_NOT_A_FILE: u8 = 6;

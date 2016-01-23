@@ -26,10 +26,9 @@ Options:
     --no-backup -B              When doing an in-place conversion, don't create a backup of 
                                 the original
     --config=CONFIG             Specific configuration file or search origin. 
-                                By default, to-uni uses
-                                the directory of the input file as a starting point and searches 
-                                upwards
-                                in the file hierarchy until CFGNAME is found.
+                                By default, to-uni uses the directory of the input file as a 
+                                starting point and searches upwards in the file system hierarchy
+                                until CFGNAME is found.
     --config-name=CFGNAME       Name of the to-uni configuration file (YAML) [default: to-uni.yml]
 
 ";
@@ -45,6 +44,7 @@ pub struct Args {
     flag_no_backup: bool
 }
 
+#[derive(Debug)]
 pub enum Input {
     /// Source file
     File(PathBuf),
@@ -64,7 +64,7 @@ impl Input {
         }
     }
 
-    pub fn open(&self) -> UniResult<Box<Read+Seek>> {
+    pub fn open(&self) -> UniResult<Box<Read>> {
         Ok(match *self {
             Input::Stdin => Box::new(stdin()),
             Input::File(ref path) => 
@@ -94,6 +94,7 @@ impl Input {
     }
 }
 
+#[derive(Debug)]
 pub enum Output {
     /// Destination file, Temporary file, create backup
     InPlace(PathBuf, PathBuf, bool),
@@ -244,9 +245,9 @@ impl Output {
 }
 
 pub struct Configuration {
-    input: Input,
-    output: Output,
-    patterns: HashMap<String, String>,
+    pub input: Input,
+    pub output: Output,
+    pub patterns: HashMap<String, String>,
     #[allow(dead_code)]
     raw_args: Args,
     #[allow(dead_code)]
@@ -298,7 +299,7 @@ impl Configuration {
     fn read_config_file(config_file_fd: &mut File, config_file_path: &Path) -> UniResult<Yaml> {
         // Need to read the entire YAML file into memeory because the char-streaming-ability of 
         // the std::io::Reader is not stable yet.
-
+        info!("Reading configuration file from {}", config_file_path.display());
         let mut raw_config_text = String::new();
         try_!(config_file_fd.read_to_string(&mut raw_config_text), 
             config_file_path.to_string_lossy().to_string(), error::code::fsio::CONFIG);

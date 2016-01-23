@@ -8,7 +8,7 @@ docopt="*"
 rustc-serialize = "*"
 yaml-rust = "*"
 atomicwrites = "*"
-aho-corasick = "*"
+stopwatch = "*"
 
 [dependencies.env_logger]
 git = "https://github.com/SealedSun/log.git"
@@ -17,3 +17,7 @@ branch = "timestamp"
 [dependencies.log]
 git = "https://github.com/SealedSun/log.git"
 branch = "timestamp"
+
+[dependencies.aho-corasick]
+git = "https://github.com/SealedSun/aho-corasick.git"
+branch = "stream-chunks"

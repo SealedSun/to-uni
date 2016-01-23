@@ -24,6 +24,7 @@ fn main() {
               .version(Some(String::from(common::TO_UNI_VERSION)))
               .decode())
         .unwrap_or_else(|e| e.exit());
+    debug!("Command line arguments: {:#?}", args);
 
     common::handle_program_exit(
         config::Configuration::from_args(args).and_then(|c| conversion::run(&c))

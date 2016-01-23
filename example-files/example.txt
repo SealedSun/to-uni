@@ -1,0 +1,10 @@
+\alpha <-- see? replaced!
+
+Btw, \delta is different from \Delta!
+
+Also, \subset and \subseteq are different as well!
+
+I can also put multiple of these together: \alpha\beta\infty.
+
+All other sequences are left untouched, such as \emph{this!}.
+

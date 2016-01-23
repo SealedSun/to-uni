@@ -8,7 +8,7 @@ use ::env_logger;
 
 use ::error::UniError;
 
-/// Version of the progressd "crate".
+/// Version of the to-uni crate.
 pub const TO_UNI_VERSION : &'static str = env!("CARGO_PKG_VERSION");
 
 pub type UniResult<T> = Result<T, UniError>;
