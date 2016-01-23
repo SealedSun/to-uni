@@ -1,5 +1,19 @@
 [package]
-
 name = "to-uni"
 version = "0.0.1"
 authors = ["Christian Klauser <christianklauser@outlook.com>"]
+
+[dependencies]
+docopt="*"
+rustc-serialize = "*"
+yaml-rust = "*"
+atomicwrites = "*"
+aho-corasick = "*"
+
+[dependencies.env_logger]
+git = "https://github.com/SealedSun/log.git"
+branch = "timestamp"
+
+[dependencies.log]
+git = "https://github.com/SealedSun/log.git"
+branch = "timestamp"
