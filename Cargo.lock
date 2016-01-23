@@ -24,7 +24,7 @@ dependencies = [
 [[package]]
 name = "aho-corasick"
 version = "0.4.0"
-source = "git+https://github.com/SealedSun/aho-corasick.git?branch=stream-chunks#c14da8e19188e39b7536918860b973c06c247a89"
+source = "git+https://github.com/SealedSun/aho-corasick.git?branch=stream-chunks#6239843e1fb45bc94bf8169f1fd7b84996057def"
 dependencies = [
  "memchr 0.1.7 (registry+https://github.com/rust-lang/crates.io-index)",
 ]
