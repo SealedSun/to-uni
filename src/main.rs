@@ -1,8 +1,14 @@
 
+// This is required to not warn on DetailedFrom::detailed_from used with
+// a single-element-tuple.
+#![allow(unused_parens)]
+
 #[macro_use]
 extern crate log;
 extern crate docopt;
-extern crate rustc_serialize;
+extern crate serde;
+#[macro_use]
+extern crate serde_derive;
 extern crate env_logger;
 extern crate yaml_rust as yaml;
 extern crate atomicwrites;
@@ -22,7 +28,7 @@ fn main() {
     let args: config::Args = Docopt::new(config::USAGE).and_then(|d| 
           d.help(true)
               .version(Some(String::from(common::TO_UNI_VERSION)))
-              .decode())
+              .deserialize())
         .unwrap_or_else(|e| e.exit());
     debug!("Command line arguments: {:#?}", args);
 

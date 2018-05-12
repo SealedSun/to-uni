@@ -33,7 +33,7 @@ Options:
 
 ";
 
-#[derive(Debug,RustcDecodable)]
+#[derive(Debug,Deserialize)]
 #[allow(non_snake_case)]
 pub struct Args {
     arg_input: Option<String>,
@@ -55,7 +55,7 @@ pub enum Input {
 impl Input {
     pub fn directory(&self) -> UniResult<PathBuf> {
         match *self {
-            Input::Stdin => Ok(try!(env::current_dir())),
+            Input::Stdin => Ok(env::current_dir()?),
             Input::File(ref buf) => {
                 let base = try_!(buf.parent().ok_or("File does not have a parent directory."), 
                     ::error::code::internal::MISC);
@@ -76,7 +76,7 @@ impl Input {
     pub fn from_args(args: &Args) -> UniResult<Input> {
         if let Some(ref raw_input_path) = args.arg_input {
             let input_path = PathBuf::from(raw_input_path);
-            try!(Input::verify_input_path(&input_path));
+            Input::verify_input_path(&input_path)?;
             Ok(Input::File(input_path))
         }
         else {
@@ -122,13 +122,13 @@ impl Output {
     /// opened before.
     pub fn close(&self, mut file: Box<Write>) -> UniResult<()> {
         // Close the stream before we perform cleanup operations
-        try!(file.flush());
+        file.flush()?;
         ::std::mem::drop(file);
 
         match *self {
             Output::Stdout | Output::OtherFile(_) => (),
-            Output::InPlace(ref dest_path, ref tmp_path, backup) => 
-                try!(Output::close_in_place(dest_path, tmp_path, backup))
+            Output::InPlace(ref dest_path, ref tmp_path, backup) =>
+                Output::close_in_place(dest_path, tmp_path, backup)?
         }
 
         Ok(())
@@ -212,7 +212,7 @@ impl Output {
             let r = opt_derived_file_path.ok_or_else(|| error::usage(
                 "Input file name needs to be known when no output file name is given.".to_string())
                 .with_minor(error::code::usage::MISSING_OUTPUT_FILE_NAME));
-            try!(r)
+            r?
         };
 
         Ok(Output::OtherFile(file_path))
@@ -225,7 +225,7 @@ impl Output {
             Output::check_output_path(raw_path, args)
         } else if let Some(ref raw_input_path) = args.arg_input {
             let file_path : PathBuf = PathBuf::from(raw_input_path);
-            try!(Input::verify_input_path(&file_path));
+            Input::verify_input_path(&file_path)?;
             let mut tmp_name = ::std::ffi::OsString::from(".~");
             {
                 let file_name = file_path.file_name()
@@ -256,7 +256,7 @@ pub struct Configuration {
 
 impl Configuration {
     fn open_config_file(input: &Input, args: &Args) -> UniResult<(File, PathBuf)> {
-        let mut dir_path : PathBuf = try!(input.directory());
+        let mut dir_path : PathBuf = input.directory()?;
         let config_file_name = ::std::ffi::OsString::from(&args.flag_config_name);
         loop {
             let mut config_file_candidate = dir_path.clone();
@@ -345,8 +345,7 @@ impl Configuration {
         if let Yaml::Hash(ref top_level) = *raw_config {
             if let Yaml::Hash(ref raw_pats) = top_level[&pattern_key] {
                 for (k,v) in raw_pats {
-                    let (key,value) = try!(
-                        Configuration::parse_pattern_entry(k, v, config_file_path));
+                    let (key,value) = Configuration::parse_pattern_entry(k, v, config_file_path)?;
                     debug!("Adding mapping {} -> {}", key, value);
                     patterns.insert(key,value);
                 }
@@ -371,17 +370,16 @@ impl Configuration {
     /// load configuration files.
     /// The arguments are preserved as part of the Configuration data structure.
     pub fn from_args(args: Args) -> UniResult<Configuration> {
-        let input = try!(Input::from_args(&args));
-        let output = try!(Output::from_args(&args));
-        let (mut config_file_fd, config_file_path) = 
-            try!(Configuration::open_config_file(&input, &args));
-        let raw_config = try!(
-            Configuration::read_config_file(&mut config_file_fd, &config_file_path));
+        let input = Input::from_args(&args)?;
+        let output = Output::from_args(&args)?;
+        let (mut config_file_fd, config_file_path) =
+            Configuration::open_config_file(&input, &args)?;
+        let raw_config = Configuration::read_config_file(&mut config_file_fd, &config_file_path)?;
         let mut patterns = HashMap::new();
-        try!(Configuration::parse_config(&raw_config, &config_file_path, &mut patterns));
+        Configuration::parse_config(&raw_config, &config_file_path, &mut patterns)?;
 
         Ok(Configuration {
-            input: input, output: output, raw_config: raw_config, patterns: patterns, 
+            input, output, raw_config, patterns,
             raw_args: args
         })
     }

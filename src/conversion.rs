@@ -23,12 +23,12 @@ pub fn run(config: &Configuration) -> UniResult<()> {
     info!("Matching automaton for {} patterns computed in {}ms", config.patterns.len(), stopwatch.elapsed_ms());
 
 
-    let mut output = try!(config.output.open());
+    let mut output = config.output.open()?;
     {
         // Region where the input file is open
-        let input = try!(config.input.open());        
+        let input = config.input.open()?;
         let mut chunks = StreamChunks::with_capacity(&automaton, input, 512);
-        try!(chunks.all::<_,UniError>(|chunk|{
+        chunks.all::<_, UniError>(|chunk| {
             let out_bytes = match chunk {
                 StreamChunk::Matching(m) => {
                     // TODO: skip text-based lookup in favour of pattern index.
@@ -45,7 +45,7 @@ pub fn run(config: &Configuration) -> UniResult<()> {
                 Err(ioe) => Err(UniError::new(code::fsio::OUTPUT, UniErrorData::Io(ioe))),
                 Ok(()) => Ok(())
             }
-        }));
+        })?;
     }
 
     // Return the output writer; behaviour depends on what the user asked for

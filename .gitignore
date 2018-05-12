@@ -8,6 +8,10 @@
 # Executables
 *.exe
 
+# JetBrains IDE
+*.iml
+.idea
+
 # Cargo
 /target
 

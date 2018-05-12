@@ -28,7 +28,7 @@ impl UniError {
     pub fn new(minor: u8, data: UniErrorData) -> UniError {
         let (major,_) = data.default_code_major_minor();
         UniError {
-            code_major: major, code_minor: minor, data: data
+            code_major: major, code_minor: minor, data
         }
     }
 
@@ -61,7 +61,7 @@ pub fn usage(message: String) -> UniError {
     let data = UniErrorData::Usage(message);
     let (minor,major) = data.default_code_major_minor();
     UniError {
-        code_minor: minor, code_major: major, data: data
+        code_minor: minor, code_major: major, data
     }
 }
 
@@ -113,7 +113,7 @@ impl Error for UniError {
 
 impl Display for UniError {
     fn fmt(&self, f: &mut fmt::Formatter) -> Result<(), fmt::Error> {
-        try!(write!(f, "{} ", self.description()));
+        write!(f, "{} ", self.description())?;
         match self.data {
             UniErrorData::Io(ref e) => write!(f, "{}", e),
             UniErrorData::FsIo(ref path, ref e) => write!(f, "{} Path: {}", e, path),
@@ -159,7 +159,7 @@ macro_rules! from_result_ {
 
 macro_rules! from_ {
     ($expr:expr, $($details:expr),+) => (
-        $crate::error::DetailedFrom::detailed_from($expr, ($($details),+) )
+        $crate::error::DetailedFrom::detailed_from($expr, ($($details),*) )
     )
 }
 
@@ -178,7 +178,7 @@ impl DetailedFrom<io::Error, (String, u8)> for UniError {
         let data = UniErrorData::FsIo(details.0, err);
         let (major,_) = data.default_code_major_minor();
         UniError {
-            code_major: major, code_minor: details.1, data: data
+            code_major: major, code_minor: details.1, data
         }
     }
 }
@@ -188,7 +188,7 @@ impl DetailedFrom<String, u8> for UniError {
         let data = UniErrorData::Internal(s);
         let (major,_) = data.default_code_major_minor();
         UniError {
-            code_major: major, code_minor: minor, data: data
+            code_major: major, code_minor: minor, data
         }
     }
 }
@@ -198,7 +198,7 @@ impl <'a> DetailedFrom<&'a str, u8> for UniError {
         let data = UniErrorData::Internal(s.to_string());
         let (major,_) = data.default_code_major_minor();
         UniError {
-            code_major: major, code_minor: minor, data: data
+            code_major: major, code_minor: minor, data
         }
     }
 }
@@ -208,7 +208,7 @@ impl DetailedFrom<yaml::ScanError, String> for UniError {
         let data = UniErrorData::YamlScan(path, err);
         let (major,minor) = data.default_code_major_minor();
         UniError {
-            code_major: major, code_minor: minor, data: data
+            code_major: major, code_minor: minor, data
         }
     }
 }

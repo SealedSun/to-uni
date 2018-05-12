@@ -4,20 +4,21 @@ version = "0.0.2"
 authors = ["Christian Klauser <christianklauser@outlook.com>"]
 
 [dependencies]
-docopt="*"
-rustc-serialize = "*"
-yaml-rust = "*"
-atomicwrites = "*"
+docopt="0.8"
+yaml-rust = "0.4"
+atomicwrites = "0.2"
 stopwatch = "*"
+serde = "1.0.54"
+serde_derive = "1.0.54"
 
 [dependencies.env_logger]
-git = "https://github.com/SealedSun/log.git"
+git = "https://github.com/chklauser/log.git"
 branch = "timestamp"
 
 [dependencies.log]
-git = "https://github.com/SealedSun/log.git"
+git = "https://github.com/chklauser/log.git"
 branch = "timestamp"
 
 [dependencies.aho-corasick]
-git = "https://github.com/SealedSun/aho-corasick.git"
+git = "https://github.com/chklauser/aho-corasick.git"
 branch = "stream-chunks"
